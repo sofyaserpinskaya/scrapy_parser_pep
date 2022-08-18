@@ -15,6 +15,7 @@ ITEM_PIPELINES = {
     'pep_parse.pipelines.PepParsePipeline': 300,
 }
 
+FEED_URI_PARAMS = 'pep_parse.utils.uri_params'
 
 FEEDS = {
     RESULTS_DIR / 'pep_%(time)s.csv': {
