@@ -10,10 +10,14 @@ from pep_parse.settings import BASE_DIR, RESULTS_DIR
 DATETIME_FORMAT = '%Y-%m-%d_%H-%M-%S'
 FILENAME = 'status_summary_{time}.csv'
 STATUS_SUMMARY_TITLE = ['Статус', 'Количество']
-STATUS_SUMMARY_TOTAL = ['Total']
+STATUS_SUMMARY_TOTAL = 'Total'
 
 
 class PepParsePipeline:
+
+    def __init__(self):
+        self.results_dir = BASE_DIR / RESULTS_DIR
+        self.results_dir.mkdir(exist_ok=True)
 
     def open_spider(self, spider):
         self.results = defaultdict(int)
@@ -25,20 +29,17 @@ class PepParsePipeline:
         return item
 
     def close_spider(self, spider):
-        results_dir = BASE_DIR / RESULTS_DIR
-        results_dir.mkdir(exist_ok=True)
         with open(
-            results_dir / FILENAME.format(
+            self.results_dir / FILENAME.format(
                 time=datetime.now().strftime(DATETIME_FORMAT)
             ),
             mode='w',
             encoding='utf-8'
         ) as file:
-            STATUS_SUMMARY_TOTAL.append(sum(self.results.values()))
             csv.writer(
-                file, dialect='unix'
+                file, dialect=csv.unix_dialect, quoting=csv.QUOTE_NONE
             ).writerows([
                 STATUS_SUMMARY_TITLE,
                 *sorted(self.results.items()),
-                STATUS_SUMMARY_TOTAL,
+                [STATUS_SUMMARY_TOTAL, sum(self.results.values())]
             ])
