@@ -1,3 +1,4 @@
+import csv
 from collections import defaultdict
 from datetime import datetime
 
@@ -22,14 +23,19 @@ class PepParsePipeline:
         return item
 
     def close_spider(self, spider):
+        results_dir = BASE_DIR / RESULTS_DIR
+        results_dir.mkdir(exist_ok=True)
         with open(
-            BASE_DIR / RESULTS_DIR / FILENAME.format(
+            results_dir / FILENAME.format(
                 time=datetime.now().strftime(DATETIME_FORMAT)
             ),
             mode='w',
             encoding='utf-8'
         ) as file:
-            file.write('Статус,Количество\n')
-            for status, number in sorted(self.results.items()):
-                file.write(f'{status},{number}\n')
-            file.write(f'Total,{sum(self.results.values())}\n')
+            csv.writer(
+                file, dialect='unix'
+            ).writerows([
+                ['Статус', 'Количество'],
+                *sorted(self.results.items()),
+                ['Total', sum(self.results.values())]
+            ])
