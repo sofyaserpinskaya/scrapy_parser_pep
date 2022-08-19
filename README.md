@@ -8,7 +8,7 @@
 
 ### Автор:
 
-src - [Софья Серпинская](https://github.com/sofyaserpinskaya)
+pep_parse - [Софья Серпинская](https://github.com/sofyaserpinskaya)
 
 tests - [Яндекс.Практикум](https://github.com/yandex-praktikum)
 
